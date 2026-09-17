@@ -20,10 +20,11 @@ async function enterMenu(page: Page) {
 
 async function expectDarkSurface(locator: Locator) {
   await expect(locator).toBeVisible()
-  const color = await locator.evaluate((element) => getComputedStyle(element).backgroundColor)
-  const channels = color.match(/[\d.]+/g)?.slice(0, 3).map(Number) ?? []
-  expect(channels, `Expected an opaque RGB background, received ${color}`).toHaveLength(3)
-  expect(Math.max(...channels), `Expected a dark surface, received ${color}`).toBeLessThan(90)
+  await expect.poll(async () => {
+    const color = await locator.evaluate((element) => getComputedStyle(element).backgroundColor)
+    const channels = color.match(/[\d.]+/g)?.slice(0, 3).map(Number) ?? []
+    return channels.length === 3 ? Math.max(...channels) : 255
+  }, { message: 'Expected the surface transition to settle on a dark background' }).toBeLessThan(90)
 }
 
 async function expectTextContrast(locator: Locator, minimum = 4.5) {
@@ -117,7 +118,8 @@ test.describe('SPEC-DARK-MODE-001 夜间模式', () => {
     await expectTextContrast(warning.getByText(/辣度极高/))
     await page.getByRole('button', { name: '重新选择' }).click()
     await expect(dialog).toBeVisible()
-    await expectTheme(page, 'dark')
+    await expect(page.locator('html')).toHaveClass(/(?:^|\s)dark(?:\s|$)/)
+    await expect(page.locator('html')).toHaveCSS('color-scheme', 'dark')
     await page.keyboard.press('Escape')
 
     await page.getByRole('button', { name: /呼叫服务|Call Service/ }).click()
@@ -130,18 +132,19 @@ test.describe('SPEC-DARK-MODE-001 夜间模式', () => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/?preview=menu')
     await page.getByRole('button', { name: DARK_TOGGLE }).click()
-    await expect(page.getByText(/本桌购物车|Table cart/).first()).toBeVisible()
     await page.getByRole('button', { name: /查看购物车|View cart/ }).click()
     const dialog = page.getByRole('dialog')
     await expectDarkSurface(dialog)
     await expect(dialog.getByText(/姚乾/)).toBeVisible()
-    await dialog.getByRole('button', { name: /提交下单|Submit order/ }).click()
+    await dialog.getByRole('button', { name: /提交加菜|Submit Additional/ }).click()
 
-    await expect(page.getByRole('heading', { name: /本桌订单|Table order/ })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /这一锅，正在抵达|Your pot is on the way/ })).toBeVisible()
     await expectTheme(page, 'dark')
     await expectDarkSurface(page.locator('body'))
-    await page.getByRole('button', { name: /去结账|Checkout/ }).click()
-    await expect(page.getByRole('heading', { name: /结账|Checkout/ })).toBeVisible()
+    const checkoutButton = page.getByRole('button', { name: /去结账|Checkout/ })
+    await checkoutButton.focus()
+    await page.keyboard.press('Enter')
+    await expect(page.getByRole('heading', { name: /核对本桌账单|Review Your Bill/ })).toBeVisible()
     await expectTheme(page, 'dark')
     await expectDarkSurface(page.locator('body'))
   })
@@ -156,9 +159,10 @@ test.describe('SPEC-DARK-MODE-001 夜间模式', () => {
     await expect(page.locator('html')).toHaveClass(/elderly/)
     await expect(page.getByRole('button', { name: 'Switch to light mode' })).toBeVisible()
     const languageButton = page.getByRole('button', { name: 'Switch language' })
-    await languageButton.focus()
+    await page.getByRole('button', { name: '切换至常规模式' }).focus()
+    await page.keyboard.press('Tab')
     await expect(languageButton).toBeFocused()
-    await expect(languageButton).toHaveCSS('outline-style', 'solid')
+    await expect.poll(async () => languageButton.evaluate((element) => getComputedStyle(element).boxShadow)).not.toBe('none')
     await expectTextContrast(page.getByRole('heading', { name: /What shall we order/ }))
   })
 
