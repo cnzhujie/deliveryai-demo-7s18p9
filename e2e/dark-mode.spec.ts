@@ -120,7 +120,8 @@ test.describe('SPEC-DARK-MODE-001 夜间模式', () => {
     await expect(dialog).toBeVisible()
     await expect(page.locator('html')).toHaveClass(/(?:^|\s)dark(?:\s|$)/)
     await expect(page.locator('html')).toHaveCSS('color-scheme', 'dark')
-    await page.keyboard.press('Escape')
+    await dialog.getByRole('button', { name: /关闭|Close/ }).click()
+    await expect(dialog).not.toBeVisible()
 
     await page.getByRole('button', { name: /呼叫服务|Call Service/ }).click()
     dialog = page.getByRole('dialog')
