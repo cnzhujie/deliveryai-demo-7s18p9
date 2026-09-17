@@ -10,6 +10,52 @@ body { margin: 0; min-width: 320px; min-height: 100vh; background: #fbf5ea; }
 button, input { font: inherit; }
 ::selection { background: #ffddd8; color: #a9231a; }
 
+/* 夜间主题。颜色集中映射现有 utility，避免改变组件结构和业务状态。 */
+.dark { color: #f7f4ed; background: #17191c; }
+.dark body { background: #17191c; }
+.dark ::selection { background: #7f1d1d; color: #fff7ed; }
+.dark .paper-noise { background-image: radial-gradient(rgba(255, 255, 255, .035) .7px, transparent .7px); }
+
+/* 页面、容器与输入控件 */
+.dark .bg-rice-50 { background-color: #1c1f23; }
+.dark .bg-rice-50\/95 { background-color: rgb(28 31 35 / .95); }
+.dark .bg-rice-100 { background-color: #17191c; }
+.dark .bg-rice-100\/95 { background-color: rgb(23 25 28 / .95); }
+.dark .bg-rice-200 { background-color: #33383e; }
+.dark .bg-white { background-color: #25292e; }
+.dark .bg-white\/80 { background-color: rgb(37 41 46 / .92); }
+.dark .bg-white\/90,
+.dark .bg-white\/95 { background-color: rgb(37 41 46 / .96); }
+.dark .bg-white\/55 { background-color: rgb(37 41 46 / .72); }
+.dark .bg-amber-100,
+.dark .bg-amber-100\/70 { background-color: #3b3120; }
+.dark .bg-chili-50 { background-color: #3b252a; }
+.dark .bg-chili-100 { background-color: #47272b; }
+.dark .bg-emerald-50 { background-color: #17352d; }
+.dark input { color: #f7f4ed; caret-color: #fb7185; }
+.dark input::placeholder { color: #aeb4bb; opacity: 1; }
+
+/* 正文、链接与状态色：均以实际深色背景满足 WCAG AA。 */
+.dark .text-charcoal-900 { color: #f7f4ed; }
+.dark .text-charcoal-700 { color: #e3e5e7; }
+.dark .text-charcoal-500 { color: #c7cbd0; }
+.dark .text-chili-500,
+.dark .text-chili-600,
+.dark .text-chili-700 { color: #fb7185; }
+.dark .text-emerald-600 { color: #6ee7b7; }
+.dark .bg-amber-400.text-charcoal-900 { color: #211f1c; }
+.dark .hover\:text-chili-500:hover { color: #fda4af; }
+
+/* 边框、焦点、悬停和选中状态 */
+.dark .border-charcoal-900\/5 { border-color: rgb(226 232 240 / .16); }
+.dark .border-charcoal-900\/10 { border-color: rgb(226 232 240 / .24); }
+.dark .border-white\/80 { border-color: rgb(226 232 240 / .24); }
+.dark .border-white { border-color: #25292e; }
+.dark .hover\:border-chili-500:hover { border-color: #fb7185; }
+.dark .hover\:border-chili-500\/30:hover { border-color: rgb(251 113 133 / .6); }
+.dark button:focus-visible,
+.dark input:focus-visible { outline: 2px solid #fda4af; outline-offset: 2px; }
+
 /* 老人模式全局基础：放大字号约 1.25 倍 */
 .elderly { font-size: 125%; }
 

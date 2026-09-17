@@ -2,6 +2,8 @@ import { Accessibility, Crown, Languages, LayoutDashboard, MapPin, PhoneCall, Re
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
+import { ThemeToggle } from '@/components/ThemeToggle'
+import type { Theme } from '@/hooks/useTheme'
 import { tableAreas } from '@/data/menu'
 import type { ViewName } from '@/types'
 
@@ -11,6 +13,8 @@ interface TopBarProps {
   serviceCount: number
   language: string
   elderly: boolean
+  theme: Theme
+  onToggleTheme: () => void
   onToggleLanguage: () => void
   onToggleElderly: () => void
   onView: (view: ViewName) => void
@@ -18,7 +22,7 @@ interface TopBarProps {
   onConsole: () => void
 }
 
-export function TopBar({ table, view, serviceCount, language, elderly, onToggleLanguage, onToggleElderly, onView, onService, onConsole }: TopBarProps) {
+export function TopBar({ table, view, serviceCount, language, elderly, theme, onToggleTheme, onToggleLanguage, onToggleElderly, onView, onService, onConsole }: TopBarProps) {
   const { t } = useTranslation()
   const areaKey = tableAreas[table]
   const tableLabel = areaKey ? `${table} · ${t(areaKey)}` : table
@@ -56,6 +60,7 @@ export function TopBar({ table, view, serviceCount, language, elderly, onToggleL
             </DialogContent>
           </Dialog>
           <Button variant="outline" size="icon" onClick={onConsole} aria-label={t('common.aria_console')}><LayoutDashboard size={18} /></Button>
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
           <Button variant="outline" size="icon" onClick={onToggleElderly} aria-label={elderly ? '切换至常规模式' : '切换至老人模式'}>
             <Accessibility size={18} className={elderly ? 'text-chili-500' : ''} />
           </Button>
