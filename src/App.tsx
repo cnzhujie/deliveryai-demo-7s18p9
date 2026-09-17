@@ -11,9 +11,11 @@ import { MenuView } from '@/components/MenuView'
 import { OrderView } from '@/components/OrderView'
 import { ServiceSheet } from '@/components/ServiceSheet'
 import { TopBar } from '@/components/TopBar'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { useElderlyMode } from '@/hooks/useElderlyMode'
+import { useTheme } from '@/hooks/useTheme'
 import { orderReducer, initialState } from '@/state/orderReducer'
 import { products } from '@/data/menu'
 import { money } from '@/lib/utils'
@@ -37,6 +39,7 @@ export default function App() {
   const { t, i18n } = useTranslation()
   const [state, dispatch] = useReducer(orderReducer, initialState, createPreviewState)
   const { enabled: elderly, toggle: toggleElderly } = useElderlyMode()
+  const { theme, toggle: toggleTheme } = useTheme()
   const [serviceOpen, setServiceOpen] = useState(false)
   const [consoleOpen, setConsoleOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
@@ -69,11 +72,11 @@ export default function App() {
   }
 
   if (state.view === 'bind' || !state.table) {
-    return <BindTable onBind={(table) => dispatch({ type: 'BIND_TABLE', table })} />
+    return <><ThemeToggle theme={theme} onToggle={toggleTheme} floating /><BindTable onBind={(table) => dispatch({ type: 'BIND_TABLE', table })} /></>
   }
 
   if (state.view === 'welcome') {
-    return <WelcomeView table={state.table!} onEnter={() => dispatch({ type: 'SET_VIEW', view: 'menu' })} />
+    return <><ThemeToggle theme={theme} onToggle={toggleTheme} floating /><WelcomeView table={state.table!} onEnter={() => dispatch({ type: 'SET_VIEW', view: 'menu' })} /></>
   }
 
   return (
@@ -84,6 +87,8 @@ export default function App() {
         serviceCount={waitingServices}
         language={i18n.language}
         elderly={elderly}
+        theme={theme}
+        onToggleTheme={toggleTheme}
         onToggleLanguage={toggleLanguage}
         onToggleElderly={handleToggleElderly}
         onView={changeView}

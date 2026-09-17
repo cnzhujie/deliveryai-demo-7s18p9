@@ -8,6 +8,17 @@
     <title>沸点 · 火锅点单概念演示</title>
     <script>
       (function () {
+        // 在应用挂载前恢复有效主题，避免夜间模式首屏闪烁。
+        try {
+          var theme = localStorage.getItem('display-theme');
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#17191c');
+          }
+        } catch (e) {
+          // localStorage 不可用时保持默认浅色
+        }
         // 同步设置初始语言到 html lang 属性
         try {
           var lang = localStorage.getItem('i18nextLng');
